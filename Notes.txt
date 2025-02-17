@@ -1,0 +1,24 @@
+utiliser l'instruction EI pour activer les interruptions dans le processeur
+EI();
+
+mettre le bit 2 de FFFF à 1 pour activer les interruptions du Timer
+LD_HL('FFFF');
+SET_2_pHLp()
+écrire 00 dans FF06 pour que le TIMA soit remis à 00 quand il overflow
+LD_HL('FF06');
+LD_A('00');
+LD_pHLp_A();
+écrire xxxxx100 dans FF07 pour activer l'incrémentation de TIMA et choisir une fréquence de mise à jour de TIMA assez basse
+LD_HL('FF07');
+SET_2_pHLp();
+RESET_1_pHLp();
+RESET_0_pHLp();
+
+mettre le code de chargement de la prochaine note à une adresse XXXX
+PC = subroutine_section_end;
+load_next_note_subroutine = PC;
+%routine de chargement de la note
+
+écrire CALL XXXX à l'adresse 0050 puis RETI à l'adresse 0051
+PC = hex2dec('0050');
+CALL(load_next_note_subroutine);
