@@ -127,7 +127,7 @@ event =  {'24','77'; %Left & right volume max
           '12','F0'; %Initial volume to the max, decreasing envelope
           '16','40'; %25% duty cycle, Max duration for CH2 timer
           '17','F0'}; %Initial volume to the max, decreasing envelope
-insert_audio_data(event,1,'normal');
+insert_audio_data(event,0,'normal');
           
 load('perfection_note_values.mat');
 
@@ -136,7 +136,11 @@ for n = 1:size(p,1)
              '13', p{n,1}(3:4);
              '19', p{n,2}(1:2);
              '18', p{n,2}(3:4)};
-    insert_audio_data(event,2,'normal');
+	if n ~= size(p,1)
+        insert_audio_data(event,2,'normal');
+    else 
+        insert_audio_data(event,1,'normal');
+    end
 end
 
 disp(['loop event data: ' dec2hex(PC)])
@@ -149,7 +153,7 @@ disp(['loop event data: ' dec2hex(PC)])
 %C0-01  next_audio_pointer_low
 %00     value to put there
 event_data = {next_audio_event_pointer_H,'30';
-              next_audio_event_pointer_L,'00'};
+              next_audio_event_pointer_L,'12'};
 insert_audio_data(event_data,0,'long');
 
 fid = fopen('gb_music_lite_test.gb','w');
