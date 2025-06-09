@@ -149,7 +149,6 @@ for t = 1:size(notes,2)
             %add event to shut off current channel
             p{i,t} = '0FFF';
         elseif strcmp(notes{i,t},'(L)')
-            p{i,t} = '0FFF';
         else 
             for j = 1:size(note_values,1)   %loop to look for note
                 if strcmp(note_values{j,1}, notes{i,t})
@@ -162,8 +161,8 @@ for t = 1:size(notes,2)
     end
 end
 
-
+p
 
 save('perfection_note_values.mat','p');
 
-GB_music_tester_lite
+%GB_music_tester_lite

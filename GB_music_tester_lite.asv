@@ -35,7 +35,6 @@ update_loop = PC;
     JR_NZ('00');if1=PC;
         %"long" copy
         %read destination address into DE
-        disp(dec2hex(PC,4));
         INC_HL();
         LD_D_pHLp();
         INC_HL();
@@ -62,14 +61,15 @@ POP_HL();
 %save address of start of next audio event:
 %this should not be done if we've used "long" copy
 CP_A('01');
-JP_Z(
-INC_HL();
-LD_B_H();   %next_audio_event_pointer <- HL++
-LD_C_L();
-LD_HL(next_audio_event_pointer_H); 
-LD_pHLp_B();
-INC_HL();
-LD_pHLp_C();
+JR_Z('00');if1 = PC;
+    INC_HL();
+    LD_B_H();   %next_audio_event_pointer <- HL++
+    LD_C_L();
+    LD_HL(next_audio_event_pointer_H); 
+    LD_pHLp_B();
+    INC_HL();
+    LD_pHLp_C();
+endif1 = PC;rom(if1)=endif1-if1;
 POP_DE();
 POP_BC();
 POP_AF();
@@ -82,10 +82,11 @@ PUSH_HL();
 PUSH_AF();
 LD_HL(next_event_timer);    %next_event_timer--
 LD_A_pHLp();
-DEC_A();
+CP_A('00');
 JR_NZ('00');startif = PC;   %if next_event_timer == 0
     CALL(update_audio_registers);   %start updating audio registers
 JR('00');else1 = PC;rom(startif) = else1-startif;
+    DEC_A();
     LD_pHLp_A();    %just saving the value of next_event_timer
 endif = PC; rom(else1) = endif-else1;
 POP_AF();
@@ -126,16 +127,21 @@ event =  {'24','77'; %Left & right volume max
           '12','F0'; %Initial volume to the max, decreasing envelope
           '16','40'; %25% duty cycle, Max duration for CH2 timer
           '17','F0'}; %Initial volume to the max, decreasing envelope
-insert_audio_data(event,1,'normal');
+insert_audio_data(event,0,'normal');
           
 load('perfection_note_values.mat');
 
 for n = 1:size(p,1)
+    if (length(p{n,2}
 	event = {'14', p{n,1}(1:2);
              '13', p{n,1}(3:4);
              '19', p{n,2}(1:2);
              '18', p{n,2}(3:4)};
-    insert_audio_data(event,3,'normal');
+	if n ~= size(p,1)
+        insert_audio_data(event,2,'normal');
+    else 
+        insert_audio_data(event,0,'normal');
+    end
 end
 
 disp(['loop event data: ' dec2hex(PC)])
@@ -148,9 +154,8 @@ disp(['loop event data: ' dec2hex(PC)])
 %C0-01  next_audio_pointer_low
 %00     value to put there
 event_data = {next_audio_event_pointer_H,'30';
-              next_audio_event_pointer_L,'00'};
-insert_audio_data(event_data,1,'long');
-
+              next_audio_event_pointer_L,'12'};
+insert_audio_data(event_data,0,'long');
 
 fid = fopen('gb_music_lite_test.gb','w');
 fwrite(fid,rom);
@@ -171,6 +176,7 @@ function insert_audio_data(event_data,time_until_next_event, transfer_type)
         end
     elseif strcmp(transfer_type,'normal')
         for i = 1:size(event_data,1)
+            disp(event_data{i,2});
             rom(PC) = hex2dec(event_data{i,1}); PC=PC+1;
             rom(PC) = hex2dec(event_data{i,2}); PC=PC+1;
         end

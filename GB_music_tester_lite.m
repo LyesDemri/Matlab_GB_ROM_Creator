@@ -132,10 +132,19 @@ insert_audio_data(event,0,'normal');
 load('perfection_note_values.mat');
 
 for n = 1:size(p,1)
-	event = {'14', p{n,1}(1:2);
-             '13', p{n,1}(3:4);
-             '19', p{n,2}(1:2);
-             '18', p{n,2}(3:4)};
+    event = {};
+    i = 1;
+    if ~isempty(p{n,1})
+        event{i:i+1} = {'14', p{n,1}(1:2);
+                    '13', p{n,1}(3:4)};
+        i = i+2;
+    end
+    if ~isempty(p{n,2})
+       event{i:i+2} = {'19', p{n,2}(1:2);
+                   '18', p{n,2}(3:4)};
+    end
+    
+    event
 	if n ~= size(p,1)
         insert_audio_data(event,2,'normal');
     else 
@@ -175,6 +184,7 @@ function insert_audio_data(event_data,time_until_next_event, transfer_type)
         end
     elseif strcmp(transfer_type,'normal')
         for i = 1:size(event_data,1)
+            disp(event_data{i,2});
             rom(PC) = hex2dec(event_data{i,1}); PC=PC+1;
             rom(PC) = hex2dec(event_data{i,2}); PC=PC+1;
         end
