@@ -126,21 +126,51 @@ event =  {'24','77'; %Left & right volume max
           '11','80'; %50% duty cycle, Max duration for CH1 timer
           '12','F0'; %Initial volume to the max, decreasing envelope
           '16','40'; %25% duty cycle, Max duration for CH2 timer
-          '17','F0'}; %Initial volume to the max, decreasing envelope
+          '17','F0'; %Initial volume to the max, decreasing envelope
+          '1A','80'; %CH3 DAC ON
+          '1C','20'; %CH3 Output level = 100%
+          '30','FF'; %Wave
+          '31','FF'; %Wave
+          '32','FF'; %Wave
+          '33','FF'; %Wave
+          '34','FF'; %Wave
+          '35','FF'; %Wave
+          '36','FF'; %Wave
+          '37','FF'; %Wave
+          '38','FF'; %Wave
+          '39','FF'; %Wave
+          '3A','FF'; %Wave
+          '37','FF'; %Wave
+          '37','FF'; %Wave
+          '37','FF'; %Wave
+          '37','FF'; %Wave
+          '37','FF'; %Wave
+          
 insert_audio_data(event,0,'normal');
           
 load('perfection_note_values.mat');
 
 for n = 1:size(p,1)
-    if (length(p{n,2}
-	event = {'14', p{n,1}(1:2);
-             '13', p{n,1}(3:4);
-             '19', p{n,2}(1:2);
-             '18', p{n,2}(3:4)};
-	if n ~= size(p,1)
-        insert_audio_data(event,2,'normal');
-    else 
-        insert_audio_data(event,0,'normal');
+    event = {};
+    i = 1;
+    if ~isempty(p{n,1})
+        event = [event;
+                {'14', p{n,1}(1:2);
+                  '13', p{n,1}(3:4)}];
+    end
+    if ~isempty(p{n,2})
+       event = [event;
+               {'19', p{n,2}(1:2);
+                '18', p{n,2}(3:4)}];
+    end
+    if ~isempty(event)
+        if n ~= size(p,1)
+            insert_audio_data(event,2,'normal');
+        else 
+            insert_audio_data(event,1,'normal');
+        end
+    else
+        error('There are no events to insert!');
     end
 end
 
@@ -176,7 +206,6 @@ function insert_audio_data(event_data,time_until_next_event, transfer_type)
         end
     elseif strcmp(transfer_type,'normal')
         for i = 1:size(event_data,1)
-            disp(event_data{i,2});
             rom(PC) = hex2dec(event_data{i,1}); PC=PC+1;
             rom(PC) = hex2dec(event_data{i,2}); PC=PC+1;
         end

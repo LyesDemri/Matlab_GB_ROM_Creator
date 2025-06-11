@@ -126,29 +126,57 @@ event =  {'24','77'; %Left & right volume max
           '11','80'; %50% duty cycle, Max duration for CH1 timer
           '12','F0'; %Initial volume to the max, decreasing envelope
           '16','40'; %25% duty cycle, Max duration for CH2 timer
-          '17','F0'}; %Initial volume to the max, decreasing envelope
+          '17','F0'; %Initial volume to the max, decreasing envelope
+          '1A','80'; %CH3 DAC ON
+          '1C','20'; %CH3 Output level = 100%
+          '30','FF'; %Waveform
+          '31','FF'; %Waveform
+          '32','FF'; %Waveform
+          '33','FF'; %Waveform
+          '34','FF'; %Waveform
+          '35','FF'; %Waveform
+          '36','FF'; %Waveform
+          '37','FF'; %Waveform
+          '38','00'; %Waveform
+          '39','00'; %Waveform
+          '3A','00'; %Waveform
+          '3B','00'; %Waveform
+          '3C','00'; %Waveform
+          '3D','00'; %Waveform
+          '3E','00'; %Waveform
+          '3F','00'}; %Waveform
+          
 insert_audio_data(event,0,'normal');
           
+
 load('perfection_note_values.mat');
 
 for n = 1:size(p,1)
     event = {};
     i = 1;
     if ~isempty(p{n,1})
-        event{i:i+1} = {'14', p{n,1}(1:2);
-                    '13', p{n,1}(3:4)};
-        i = i+2;
+        event = [event;
+                {'14', p{n,1}(1:2);
+                  '13', p{n,1}(3:4)}];
     end
     if ~isempty(p{n,2})
-       event{i:i+2} = {'19', p{n,2}(1:2);
-                   '18', p{n,2}(3:4)};
+       event = [event;
+               {'19', p{n,2}(1:2);
+                '18', p{n,2}(3:4)}];
     end
-    
-    event
-	if n ~= size(p,1)
-        insert_audio_data(event,2,'normal');
-    else 
-        insert_audio_data(event,1,'normal');
+    if ~isempty(p{n,3})
+       event = [event;
+               {'1E', p{n,3}(1:2);
+                '1D', p{n,3}(3:4)}];
+    end
+    if ~isempty(event)
+        if n ~= size(p,1)
+            insert_audio_data(event,2,'normal');
+        else 
+            insert_audio_data(event,1,'normal');
+        end
+    else
+        error('There are no events to insert!');
     end
 end
 
@@ -162,7 +190,7 @@ disp(['loop event data: ' dec2hex(PC)])
 %C0-01  next_audio_pointer_low
 %00     value to put there
 event_data = {next_audio_event_pointer_H,'30';
-              next_audio_event_pointer_L,'12'};
+              next_audio_event_pointer_L,'36'};
 insert_audio_data(event_data,0,'long');
 
 fid = fopen('gb_music_lite_test.gb','w');
@@ -174,6 +202,7 @@ disp('Everything worked!');
 function insert_audio_data(event_data,time_until_next_event, transfer_type)
     global PC;
     global rom;
+    disp(dec2hex(PC-1))
     rom(PC) = size(event_data,1);PC=PC+1; %Number of registers to change
     if strcmp(transfer_type,'long')
         for i = 1:size(event_data,1)
@@ -184,7 +213,6 @@ function insert_audio_data(event_data,time_until_next_event, transfer_type)
         end
     elseif strcmp(transfer_type,'normal')
         for i = 1:size(event_data,1)
-            disp(event_data{i,2});
             rom(PC) = hex2dec(event_data{i,1}); PC=PC+1;
             rom(PC) = hex2dec(event_data{i,2}); PC=PC+1;
         end
