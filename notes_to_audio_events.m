@@ -1,7 +1,8 @@
 clear;clc;close all;     
 
-load('perfection.mat')
-load('note_values.mat')
+filename = 'perfection.mat';
+load(filename);
+load('note_values.mat');
 load('note_values_CH3.mat');
 
 for t = 1:size(notes,2)
@@ -32,10 +33,12 @@ for t = 1:size(notes,2)
     end
 end
 
+disp(p);
 
+save([filename(1:end-4) '_note_values.mat'],'p');
 
-p
-
-save('perfection_note_values.mat','p');
-
-GB_music_tester_lite
+compile = input('Compile rom? (Y/N)','s');
+if strcmp(compile,'Y')
+    GB_music_tester_lite
+end
+    

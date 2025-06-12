@@ -1,7 +1,7 @@
 clear;clc;close all;
 
-load('photo_deduplicated.mat')
-load('photo_map_deduplicated.mat');
+load('guilt machine_deduplicated.mat')
+load('guilt machine_map_deduplicated.mat');
 
 bytes = hex2dec(bytes);
 tile_map = hex2dec(tile_map);

@@ -33,7 +33,6 @@ toggle_tile_data_script;
 update_VRAM_script;
 handle_STAT_interrupt_script;
 
-
 load_graphics
 load_music
 

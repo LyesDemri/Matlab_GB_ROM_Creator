@@ -1,6 +1,7 @@
 clear;clc;close all;
 
-filename = 'Photo.jpg';
+filename = 'Guilt machine.jpeg';
+dot = strfind(filename,'.');
 
 completeI = rgb2gray(imread(filename));
 
@@ -12,7 +13,7 @@ completeI = double(completeI);
 completeI = floor(completeI/64);
 completeI = 3-completeI;
 imshow(uint8(255-completeI*64))
-
+%%
 m = 1;
 t = 1;
 tile_map_index = 1;
@@ -45,9 +46,9 @@ for l = 1:8:144
 end
 
 disp([num2str(length(bytes)) ' bytes used (0x' dec2hex(length(bytes)) ')']);
-save('photo_deduplicated.mat','bytes')
+save([filename(1:dot-1) '_deduplicated.mat'],'bytes')
 
 tile_map = dec2hex(tile_map);
-save('photo_map_deduplicated.mat','tile_map')
+save([filename(1:dot-1) '_map_deduplicated.mat'],'tile_map')
 
 disp('done')
