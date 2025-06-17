@@ -53,9 +53,11 @@ disp([num2str(data_left_for_code) ' bytes of ROM remaining for main program']);
 compute_global_checksum();
 
 %%%%%%%%%%%%%%%%%%%Write the rom to a file%%%%%%%%%%%%%%%%%%%%%
-fid = fopen('infinity_maze.gb','w');
+rom_filename = 'infinity_maze.gb';
+fid = fopen(rom_filename,'w');
 fwrite(fid,rom);
 fclose(fid);
 
 disp('everything worked'); 
+disp(['ROM ' rom_filename ' created']);
 

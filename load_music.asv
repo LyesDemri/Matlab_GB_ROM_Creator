@@ -1,0 +1,9 @@
+load('music.mat');
+music_start_address = dec2hex(PC,4);
+rom(music_start_address_marker_L) = PC-1;
+rom(music_start_address_marker_H) = PC;
+disp(['Music section starts at: ' dec2hex(PC,4)]);
+rom(PC+1:PC+length(music)) = hex2dec(music);
+PC = PC + length(music);
+
+disp(['End of music section: ' dec2hex(PC,4)])

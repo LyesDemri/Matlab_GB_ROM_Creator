@@ -204,7 +204,7 @@ event =  {'24','77'; %Left & right volume max
           '3E','00'; %Waveform
           '3F','00'}; %Waveform
           
-insert_audio_data(event,1,'normal');
+insert_audio_data(event,0,'normal');
           
 
 load('perfection_note_values.mat');
@@ -231,7 +231,7 @@ for n = 1:size(p,1)
         if n ~= size(p,1)
             insert_audio_data(event,2,'normal');
         else 
-            %insert_audio_data(event,1,'normal');
+            insert_audio_data(event,1,'normal');
         end
     else
         error('There are no events to insert!');

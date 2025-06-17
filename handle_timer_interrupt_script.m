@@ -3,6 +3,7 @@ handle_timer_interrupt = dec2hex(PC,4);
 
 PUSH_HL();
 PUSH_AF();
+
 LD_HL(next_note_timer);
 LD_A_pHLp();
 DEC_A();

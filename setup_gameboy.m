@@ -37,7 +37,7 @@ LD_BC(wall_address);LD_DE('8020');CALL(copy_sprite);
 LD_BC(sad_face_address);LD_DE('8030');CALL(copy_sprite); 
 
 %write map to screen:
-LD_BC(map1_address);  %start source address 3000  
+LD_BC(maps_address);  %start source address 3000  
 LD_HL('9800');  %start target address 9800
 CALL(copy_map);
 
@@ -49,14 +49,14 @@ write_to_address('10',chr_X_pixels);
 write_to_address('81','FE02');
 write_to_address('00','FE03');
 
-game_start_address = '2091';
+game_start_address = dec2hex(hex2dec(maps_address)+21,4);
 write_to_address(game_start_address(1:2),character_coordinates_H);
 write_to_address(game_start_address(3:4),character_coordinates_L);
 write_to_address('01',chr_X);
 write_to_address('01',chr_Y);
 write_to_address('01',game_state);
-write_to_address(map1_address(1:2),current_map_address_H);
-write_to_address(map1_address(3:4),current_map_address_L);
+write_to_address(maps_address(1:2),current_map_address_H);
+write_to_address(maps_address(3:4),current_map_address_L);
 
 LD_HL('FF40');SET_1_pHLp();   %turn OBJ on
 LD_HL('FF40');SET_7_pHLp();   %turn screen back on

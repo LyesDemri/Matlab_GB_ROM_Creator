@@ -24,7 +24,16 @@ JR_NZ('00'); startif=PC;    %if time_ctr_addr == 0
     LD_A_pHLp();
     CP('40');
     JR_NZ('00');startif2=PC;
-            LD_DE('6834');
+            %we'd like to put a variable value here that depends on where
+            %the data for music starts in the ROM. But we don't yet know
+            %where it will be, so we take note of it here and as soon as we
+            %know where the data will start, we will complete this LD_DE
+            %statement.
+            LD_DE('0000');  %placeholder value of 0x0000
+            %these 2 variables will remember the value where the actual
+            %value for DE will be stored.
+            music_start_address_marker_L = PC-1;
+            music_start_address_marker_H = PC;
             LD_HL(note_pointer_addr);LD_pHLp(0);
     endif2=PC;rom(startif2)=endif2-startif2;
     %(C003, C004) <- (DE)

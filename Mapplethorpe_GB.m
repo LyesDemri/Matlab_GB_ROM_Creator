@@ -1,5 +1,15 @@
 clear;clc;close all;
 
+%The Flowers of Robert Maplethorpe: Requirements
+%welcome screen
+    %white screen with black text saying "this game was made for the GB
+    %contest"
+%flowers
+    %as many flowers as possible
+%ending screen
+    %RIP Robert Maplethorpe (1946-1989), thanks for playing
+%Some music by beethoven throughout
+
 global rom;
 global PC;
 
@@ -9,127 +19,28 @@ rom = uint8(zeros(1,2^15));
 next_audio_event_pointer_H = 'C000';
 next_audio_event_pointer_L = 'C001';
 next_event_timer = 'C002';
+input_buffer_address = 'C003';  
+
 
 %Subroutines:
 PC = hex2dec('1000');
-disp(['update audio registers: ', dec2hex(PC,4)]);
-update_audio_registers = dec2hex(PC,4);
-PUSH_HL();
-PUSH_AF();
-PUSH_BC();
-PUSH_DE();
-%B <- number of registers to update
-LD_BC(next_audio_event_pointer_H);  %HL <- next_audio_event_pointer
-LD_A_pBCp();
-LD_H_A();
-INC_BC();
-LD_A_pBCp;
-LD_L_A();
-LD_B_pHLp();    %B <- [HL] = [next_audio_event_pointer which is number of registers to update]
-update_loop = PC;
-    INC_HL();       %HL++
-    LD_C_pHLp();    %C = register to be updated (starting from FF00)
-    %if register to be updated is FFFF, use regular register transfer ("long" copy)
-    LD_A('FF');
-    CP_A_C();
-    JR_NZ('00');if1=PC;
-        %"long" copy
-        %read destination address into DE
-        INC_HL();
-        LD_D_pHLp();
-        INC_HL();
-        LD_E_pHLp();
-        INC_HL();
-        LD_A_pHLp();    %read value to store into destination
-        LD_pDEp_A();
-        LD_A('01');     %to not change value of event audio later
-    JR('00');else1=PC;rom(if1)=else1-if1;
-        %"fast" copy
-        INC_HL();       %HL++
-        LD_A_pHLp();    %A = new value
-        LDH_pCp_A();    %register = new value
-    end1=PC;rom(else1)=end1-else1;
-    DEC_B();        %registers left to update--;
-JP_NZ(dec2hex(update_loop,4));
-INC_HL();       %HL++
-LD_D_pHLp();	%D = time to wait before next event
-PUSH_HL();      %because HL holds the current audio_event_pointer 
-                        %and we want to use it for a quick data transfer
-LD_HL(next_event_timer); %next note timer = time to wait before next event
-LD_pHLp_D();
-POP_HL();
-%save address of start of next audio event:
-%this should not be done if we've used "long" copy
-CP_A('01');
-JR_Z('00');if1 = PC;
-    INC_HL();
-    LD_B_H();   %next_audio_event_pointer <- HL++
-    LD_C_L();
-    LD_HL(next_audio_event_pointer_H); 
-    LD_pHLp_B();
-    INC_HL();
-    LD_pHLp_C();
-endif1 = PC;rom(if1)=endif1-if1;
-POP_DE();
-POP_BC();
-POP_AF();
-POP_HL();
-RET();
-
-disp(['Handle timer interrupt: ', dec2hex(PC,4)]);
-handle_timer_interrupt = dec2hex(PC,4);
-PUSH_HL();
-PUSH_AF();
-LD_HL(next_event_timer);    %next_event_timer--
-LD_A_pHLp();
-CP_A('00');
-JR_NZ('00');startif = PC;   %if next_event_timer == 0
-    CALL(update_audio_registers);   %start updating audio registers
-JR('00');else1 = PC;rom(startif) = else1-startif;
-    DEC_A();
-    LD_pHLp_A();    %just saving the value of next_event_timer
-endif = PC; rom(else1) = endif-else1;
-POP_AF();
-POP_HL();
-RET();
-
-%Subroutine to copy sprite from ROM to VRAM:
+update_audio_registers;
+mapplethorpe_handle_timer_interrupt
 sprite_copy_subroutine_script;
-
-%Subroutine to copy map to Tile map
 map_copy_subroutine_script;
-
-%Subroutine to wait for vblank
 vblank_subroutine_script;
 
-
-
-
-%graphics come after the subroutine section
-disp(['Start of graphics: ' dec2hex(PC,4)])
-
-load('Guilt machine_deduplicated.mat');
-album_cover_tiles_address = dec2hex(PC,4);
-disp(['Album Cover tiles bytes start at: ' album_cover_tiles_address]);
-rom(PC+1:PC+length(bytes)) = hex2dec(bytes);
-PC = PC + length(bytes);
-
-load('Guilt machine_map_deduplicated.mat');
-album_cover_map_address = dec2hex(PC,4);
-disp(['Album Cover map starts at: ' album_cover_map_address]);
-rom(PC+1:PC+length(tile_map)) = hex2dec(tile_map);
-PC = PC + length(bytes);
-
-disp(['End of graphics section: ' dec2hex(PC,4)])
-
-%starting point of GB CPU
-PC = hex2dec('0100');
-JP('0150');
+%Load graphics
+mapplthorpe_load_graphics
 
 %define reset vector
 PC = hex2dec('50');
 CALL(handle_timer_interrupt);
 RETI();
+
+%starting point of GB CPU
+PC = hex2dec('0100');
+JP('0150');
 
 %Main program:
 PC = hex2dec('0150');
@@ -148,9 +59,6 @@ LD_HL(next_event_timer);LD_pHLp('01');
 CALL(wait_for_vblank);
 LD_HL('FF40');RES_7_pHLp();
 
-%BG palette settings
-write_to_address('D8','FF47')
-
 LD_BC(album_cover_tiles_address);LD_DE('8000');
 %there are 372 tiles in the photo after dedup
 LD_L('FF');
@@ -168,6 +76,9 @@ JP_NZ(loop1);
 LD_BC(album_cover_map_address);  %start source address 32D0
 LD_HL('9800');  %start target address 9800
 CALL(copy_map);
+
+%BG palette settings
+write_to_address('D8','FF47')
 
 %turn screen back on:
 LD_HL('FF40');SET_7_pHLp();
@@ -204,7 +115,7 @@ event =  {'24','77'; %Left & right volume max
           '3E','00'; %Waveform
           '3F','00'}; %Waveform
           
-insert_audio_data(event,1,'normal');
+insert_audio_data(event,0,'normal');
           
 
 load('perfection_note_values.mat');
@@ -238,7 +149,6 @@ for n = 1:size(p,1)
     end
 end
 
-
 %this is so it loops
 %next_audio_pointer must be set to 0x3000
 %we must have the sequence 
@@ -251,7 +161,7 @@ event_data = {next_audio_event_pointer_H,'30';
               next_audio_event_pointer_L,'36'};
 insert_audio_data(event_data,1,'long');
 
-fid = fopen('perfection_gb_rom.gb','w');
+fid = fopen('mapplethorpe_gb_rom.gb','w');
 fwrite(fid,rom);
 fclose(fid);
 

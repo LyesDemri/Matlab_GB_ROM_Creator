@@ -1,6 +1,6 @@
 clear;clc;close all;
 
-filename = 'Guilt machine.jpeg';
+filename = 'Photo.jpg';
 dot = strfind(filename,'.');
 
 completeI = rgb2gray(imread(filename));
@@ -48,7 +48,8 @@ end
 disp([num2str(length(bytes)) ' bytes used (0x' dec2hex(length(bytes)) ')']);
 save([filename(1:dot-1) '_deduplicated.mat'],'bytes')
 
-tile_map = dec2hex(tile_map);
-save([filename(1:dot-1) '_map_deduplicated.mat'],'tile_map')
+bytes = tile_map; % because the load_tiles function will look for a "bytes" variable
+bytes = dec2hex(bytes);
+save([filename(1:dot-1) '_map_deduplicated.mat'],'bytes')
 
 disp('done')
