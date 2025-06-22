@@ -1,7 +1,10 @@
 clear;clc;close all;     
 
-filename = 'perfection.mat';
+filename = 'sicilienne.mat';
 load(filename);
+
+notes = notes(209:end,:);
+
 load('note_values.mat');
 load('note_values_CH3.mat');
 
@@ -39,6 +42,6 @@ save([filename(1:end-4) '_note_values.mat'],'p');
 
 compile = input('Compile rom? (Y/N)','s');
 if strcmp(compile,'Y')
-    GB_music_tester_lite
+    Mapplethorpe_GB
 end
-    
+load('sicilienne.mat')

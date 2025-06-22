@@ -24,14 +24,26 @@ input_buffer_address = 'C003';
 
 %Subroutines:
 PC = hex2dec('1000');
-update_audio_registers;
+update_audio_registers_script;
 mapplethorpe_handle_timer_interrupt
 sprite_copy_subroutine_script;
 map_copy_subroutine_script;
 vblank_subroutine_script;
 
 %Load graphics
-mapplthorpe_load_graphics
+%it doesn't really matter if the letters and numbers are stored in ASCII
+%order in the ROM. What matters is that they're stored in ASCII order in
+%the VRAM when you want to write.
+number_tiles_address = load_numbers('Alphabet/Number');
+letter_tiles_address = load_alphabet('Alphabet/Letter');
+
+%map for first screen
+first_screen_map_address = dec2hex(PC,4);
+first_screen_text = double(upper(' This ROM was made   for the 2025 GB     contest'));
+for i=1:length(first_screen_text)
+    rom(PC) = first_screen_text(i);
+    PC = PC+1;
+end
 
 %define reset vector
 PC = hex2dec('50');
@@ -59,21 +71,22 @@ LD_HL(next_event_timer);LD_pHLp('01');
 CALL(wait_for_vblank);
 LD_HL('FF40');RES_7_pHLp();
 
-LD_BC(album_cover_tiles_address);LD_DE('8000');
-%there are 372 tiles in the photo after dedup
-LD_L('FF');
+LD_BC(number_tiles_address);LD_DE('8300');%insert here so it respects ASCII
+%10 tiles for number sprites
+LD_L('0A');
 loop1 = dec2hex(PC,4);
     CALL(copy_sprite);
     DEC_L();
 JP_NZ(loop1);
-LD_L('74'); %116 tiles left
+LD_BC(letter_tiles_address);LD_DE('8410');%insert here so it respects ASCII
+LD_L('1A'); %26 tiles left for alphabet letters
 loop1 = dec2hex(PC,4);
     CALL(copy_sprite);
     DEC_L();
 JP_NZ(loop1);
 
-%Load photo map
-LD_BC(album_cover_map_address);  %start source address 32D0
+%Load first screen map
+LD_BC(first_screen_map_address);  %start source address
 LD_HL('9800');  %start target address 9800
 CALL(copy_map);
 
@@ -93,32 +106,32 @@ event =  {'24','77'; %Left & right volume max
           '26','FF'; %Audio on, all channels on
           '10','00'; %no sweep
           '11','80'; %50% duty cycle, Max duration for CH1 timer
-          '12','F0'; %Initial volume to the max, decreasing envelope
+          '12','B3'; %Initial volume to the max, decreasing envelope
           '16','40'; %25% duty cycle, Max duration for CH2 timer
-          '17','F0'; %Initial volume to the max, decreasing envelope
+          '17','B3'; %Initial volume to the max, decreasing envelope
           '1A','80'; %CH3 DAC ON
           '1C','20'; %CH3 Output level = 100%
           '30','FF'; %Waveform
-          '31','00'; %Waveform
+          '31','FF'; %Waveform
           '32','FF'; %Waveform
           '33','FF'; %Waveform
-          '34','0F'; %Waveform
+          '34','FF'; %Waveform
           '35','FF'; %Waveform
           '36','FF'; %Waveform
           '37','FF'; %Waveform
-          '38','00'; %Waveform
-          '39','00'; %Waveform
-          '3A','00'; %Waveform
-          '3B','00'; %Waveform
-          '3C','00'; %Waveform
-          '3D','00'; %Waveform
-          '3E','00'; %Waveform
-          '3F','00'}; %Waveform
+          '38','FF'; %Waveform
+          '39','FF'; %Waveform
+          '3A','FF'; %Waveform
+          '3B','FF'; %Waveform
+          '3C','ED'; %Waveform
+          '3D','CB'; %Waveform
+          '3E','A9'; %Waveform
+          '3F','87'}; %Waveform
           
 insert_audio_data(event,0,'normal');
           
 
-load('perfection_note_values.mat');
+load('sicilienne_note_values.mat');
 
 for n = 1:size(p,1)
     event = {};
@@ -145,7 +158,7 @@ for n = 1:size(p,1)
             insert_audio_data(event,1,'normal');
         end
     else
-        error('There are no events to insert!');
+        rom(PC-1) = rom(PC-1)+3;
     end
 end
 

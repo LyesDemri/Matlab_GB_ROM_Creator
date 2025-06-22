@@ -17,7 +17,7 @@ LD_pHLp_B();
 LD_HL(character_coordinates_H);
 %end_address = dec2hex(hex2dec(game_start_address)+1,4);
 end_address = dec2hex(hex2dec(maps_address) + 25*20*18 + 14*20,4);
-%end_address = '44BC';
+
 LD_A(end_address(1:2));
 CP_A_pHLp();
 JR_NZ('00');startif = PC;
