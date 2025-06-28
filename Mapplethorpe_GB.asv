@@ -53,17 +53,15 @@ RETI();
 %starting point of GB CPU
 PC = hex2dec('0100');
 JP('0150');
-write_header(' GB contest 2025');
 
 %Main program:
 PC = hex2dec('0150');
 %activate timer interrupts
 LD_HL('FFFF');LD_pHLp('04');
 %put right values for timer
-LD_HL('FF04');LD_pHLp('80');
-LD_HL('FF05');LD_pHLp('00');
-LD_HL('FF06');LD_pHLp('00');
 LD_HL('FF07');LD_pHLp('04');
+LD_HL('FF06');LD_pHLp(
+LD_HL('FF05');LD_pHLp('00');
 %initialize music pointer
 LD_HL(next_audio_event_pointer_H);LD_pHLp('30');
 LD_HL(next_audio_event_pointer_L);LD_pHLp('00');
@@ -177,8 +175,6 @@ event_data = {next_audio_event_pointer_H,'30';
               next_audio_event_pointer_L,'36'};
 insert_audio_data(event_data,1,'long');
 
-compute_global_checksum();
-
 fid = fopen('mapplethorpe_gb_rom.gb','w');
 fwrite(fid,rom);
 fclose(fid);
@@ -188,7 +184,7 @@ disp('Everything worked!');
 function insert_audio_data(event_data,time_until_next_event, transfer_type)
     global PC;
     global rom;
-    %disp(dec2hex(PC-1))
+    disp(dec2hex(PC-1))
     rom(PC) = size(event_data,1);PC=PC+1; %Number of registers to change
     if strcmp(transfer_type,'long')
         for i = 1:size(event_data,1)

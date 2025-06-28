@@ -3,8 +3,9 @@ clear;clc;close all;
 filename = 'sicilienne.mat';
 load(filename);
 
-
-notes = notes(1:end,:);
+start_bar = 1;
+end_bar = 2;
+notes = notes((start_bar-1)*12,:);
 
 load('note_values.mat');
 load('note_values_CH3.mat');

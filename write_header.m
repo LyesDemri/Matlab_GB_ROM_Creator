@@ -1,4 +1,4 @@
-function write_header()
+function write_header(title)
 global rom;
 global PC;
 %Nintendo logo
@@ -10,7 +10,6 @@ for i = 1:length(nintendo_logo_bytes)
 end
 
 %Title
-title = 'Infinity Maze';
 title = double(title);
 title(length(title)+1:16) = 0;
 
