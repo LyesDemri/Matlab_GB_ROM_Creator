@@ -1,3 +1,14 @@
 game_loop = dec2hex(PC,4);
-
-JP(game_loop); %stay here. music handled by interrupts.
+    LD_HL(game_state);
+    LD_A_pHLp();
+    CP('00');
+    JP_NZ('0000'); if1 = PC;
+        LD_HL('CFFF');
+        DEC_pHLp();
+        JR_NZ('00'); if2 = PC;
+            CALL(call_screen_2);
+            LD_HL(game_state);
+            LD_pHLp('01');
+        endif2 = PC; rom(if2) = endif2 - if2;
+    endif1 = dec2hex(PC,4);rom(if1-1) = hex2dec(endif1(3:4));rom(if1) = hex2dec(endif1(1:2));
+JP(game_loop); 

@@ -5,7 +5,7 @@ PC = hex2dec('0100');
 %skip cartridge header
 NOP();
 JP('150');
-write_header();
+write_header('Infinity Maze');
 
 PC = hex2dec('150');
 
@@ -37,8 +37,10 @@ LD_BC(wall_address);LD_DE('8020');CALL(copy_sprite);
 LD_BC(sad_face_address);LD_DE('8030');CALL(copy_sprite); 
 
 %write map to screen:
-LD_BC(maps_address);  %start source address 3000  
+LD_BC(maps_address);  %start source address 3000
+PUSH_BC();
 LD_HL('9800');  %start target address 9800
+PUSH_HL();
 CALL(copy_map);
 
 clear_OAM;

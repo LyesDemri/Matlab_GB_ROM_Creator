@@ -1,6 +1,6 @@
 clear;clc;close all;
 
-filename = 'Photo.jpg';
+filename = 'calla lily.png';
 dot = strfind(filename,'.');
 
 completeI = rgb2gray(imread(filename));

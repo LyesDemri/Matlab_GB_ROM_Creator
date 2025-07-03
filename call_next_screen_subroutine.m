@@ -1,13 +1,14 @@
 disp(['Call next screen subroutine: ' dec2hex(PC,4)]);
 load_next_screen = dec2hex(PC,4);
 
-%the "arguments" for the subroutine will be stored in the stack pointer
+%the "arguments" for the subroutine will be stored in the stack
 
-POP_DE();   %SP isn't pointing to the value I want;
-LD_HL('C100');  %place to store DE;
-LD_pHLp_D();    %store DE which contains SP (which contains PC)
-INC_HL();
-LD_pHLp_E();
+DEC_SP();
+% POP_DE();   %SP isn't pointing to the value I want;
+% LD_HL('C100');  %place to store DE;
+% LD_pHLp_D();    %store DE which contains SP (which contains PC)
+% INC_HL();
+% LD_pHLp_E();
 
 POP_AF();   %1/ new value for chr_X or chr_Y
 POP_HL();   %2/ address of chr_X or chr_Y
@@ -49,10 +50,15 @@ LD_HL(character_coordinates_H);LD_pHLp_D();
 LD_HL(character_coordinates_L);LD_pHLp_E();
 
 %Bring back PC into SP through DE
-LD_HL('C100');
-LD_D_pHLp();
-INC_HL();
-LD_E_pHLp();
-PUSH_DE();
+% LD_HL('C100');
+% LD_D_pHLp();
+% INC_HL();
+% LD_E_pHLp();
+% PUSH_DE();
+LD_A('08');
+loop1 = dec2hex(PC,4);
+    INC_SP();
+    DEC_A();
+JP_NZ(loop1);
 
 RET();

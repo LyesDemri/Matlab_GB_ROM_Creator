@@ -22,14 +22,15 @@ next_event_timer = 'C002';
 input_buffer_address = 'C003'; 
 game_state = 'C004';
 
-
 %Subroutines:
 PC = hex2dec('1000');
 update_audio_registers_script;
 mapplethorpe_handle_timer_interrupt
-sprite_copy_subroutine_script;
-map_copy_subroutine_script;
+copy_sprite_subroutine_script;
+copy_map_subroutine_script;
 vblank_subroutine_script;
+clear_screen_script;
+call_screen_2_script;
 
 %Load graphics
 %it doesn't really matter if the letters and numbers are stored in ASCII
@@ -37,6 +38,9 @@ vblank_subroutine_script;
 %the VRAM when you want to write.
 number_tiles_address = load_numbers('Alphabet/Number');
 letter_tiles_address = load_alphabet('Alphabet/Letter');
+title_screen_tiles_address = load_tiles('calla lily_deduplicated.mat');
+rom(marker1) = hex2dec(title_screen_tiles_address(1:2));
+rom(marker1-1) = hex2dec(title_screen_tiles_address(3:4));
 
 %map for first screen
 first_screen_map_address = dec2hex(PC,4);
@@ -45,6 +49,10 @@ for i=1:length(first_screen_text)
     rom(PC) = first_screen_text(i);
     PC = PC+1;
 end
+
+title_screen_map_address = load_tiles('calla lily_map_deduplicated.mat');
+rom(marker2) = hex2dec(title_screen_map_address(1:2));
+rom(marker2-1) = hex2dec(title_screen_map_address(3:4));
 
 %Load music
 mapplethorpe_load_music;
@@ -62,7 +70,7 @@ write_header(' GB contest 2025');
 %Main program:
 PC = hex2dec('0150');
 
-mapplethorpe_setup_gameboy
+mapplethorpe_setup_gameboy;
 
 mapplethorpe_game_loop;
 

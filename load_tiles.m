@@ -24,7 +24,7 @@ end
 load(filename);
 tile_address = dec2hex(PC, 4);
 if display_message
-    disp(['tile in ' [filename] ' start at: ' tile_address]);
+    disp(['tiles in ' [filename] ' start at: ' tile_address]);
 end
 rom(PC+1:PC+length(bytes)) = hex2dec(bytes)+offset;
 PC = PC + length(bytes);

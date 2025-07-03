@@ -26,8 +26,8 @@ disp(['Subroutine section starts at ' dec2hex(PC,4)])
 %routines must be declared in an order such that any routine that calls
 %another routine is defined last.
 vblank_subroutine_script;
-sprite_copy_subroutine_script;
-map_copy_subroutine_script;
+copy_sprite_subroutine_script;
+copy_map_subroutine_script;
 load_next_note_subroutine_script;
 toggle_tile_data_script;
 update_VRAM_script;
