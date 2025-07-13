@@ -6,5 +6,5 @@ global PC;
 disp(['number tiles start at: ' dec2hex(PC)]);
 number_tiles_address = dec2hex(PC,4);
 for i = 0:9
-    load_tiles([path num2str(i) '.mat']);
+    load_tiles([path '/Number' num2str(i) '.mat']);
 end
