@@ -16,3 +16,34 @@ channel2_volume_envelope = 'ff17';
 channel2_period_L = 'ff18';
 channel2_period_H_control = 'ff19';
 channel3_DAC_enable = 'ff1a';
+channel3_length_timer = 'ff1b';
+channel3_output_level = 'ff1c';
+channel3_period_L = 'ff1d';
+channel3_period_H_control = 'ff1e';
+channel4_length_timer = 'ff20';
+channel4_volume_envelope = 'ff21';
+channel4_frequency_randomness = 'ff22';
+channel4_control = 'ff23';
+master_volume_VIN_panning = 'ff24';
+sound_panning = 'ff25';
+audio_master_control = 'ff26';
+
+
+i=1;
+for r = hex2dec('ff30'):hex2dec('ff3f');
+  channel3_wave_ram{i} = dec2hex(r,4);
+  i = i + 1;
+end
+
+LCD_control = 'ff40';
+LCD_status = 'ff41';
+SCY = 'ff42';
+SCX = 'ff43';
+LCD_Y = 'ff44';
+LY_compare = 'ff45';
+BG_palette = 'ff47';
+OBP0 = 'ff48';
+OBP1 = 'ff49';
+window_Y = 'ff4a';
+window_X = 'ff4b';
+
