@@ -1,6 +1,7 @@
 %Subroutine to copy sprite from ROM to VRAM:
 disp(['sprite copy subroutine: ', dec2hex(PC)]);
 copy_sprite = dec2hex(PC,4);
+PUSH_AF();
 PUSH_HL();
 LD_L('10'); %will act as a counter
 copy_sprite_loop = PC;
@@ -11,4 +12,5 @@ copy_sprite_loop = PC;
     DEC_L();
 JP_NZ(dec2hex(copy_sprite_loop,4));
 POP_HL();
+POP_AF();
 RET();

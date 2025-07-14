@@ -3,5 +3,7 @@ turn_on_screen = dec2hex(PC,4);
 PUSH_HL();
 LD_HL(LCD_control);
 SET_7_pHLp();
+SET_4_pHLp();
+SET_0_pHLp();
 POP_HL();
 RET();
