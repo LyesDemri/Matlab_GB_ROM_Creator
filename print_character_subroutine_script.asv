@@ -1,0 +1,24 @@
+%Subroutine to copy sprite from ROM to VRAM:
+disp(['print character subroutine: ', dec2hex(PC)]);
+print_character = dec2hex(PC,4);
+
+%writes byte contained in register A at address of cursor (main program
+%must define cursor_address variable)
+%increments cursor address
+
+PUSH_BC();
+PUSH_DE();
+
+LD_DE(cursor_address_H);
+LD_B_pDEp();
+INC_DE();
+LD_C_pDEp();
+LD_D_B();
+LD_E_C();
+LD_pDEp_A();
+
+CALL(increment_16_bit_register);
+
+POP_DE();
+POP_BC();
+RET();
