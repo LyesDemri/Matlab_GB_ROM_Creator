@@ -1,7 +1,13 @@
-clear;clc;close all;
+function tile_visualizer(path_to_tiles, path_to_map)
 
-load('guilt machine_deduplicated.mat')
-load('guilt machine_map_deduplicated.mat');
+load(path_to_tiles);
+
+tmp = bytes;    %quick hack because both files store data as variable "bytes"
+load(path_to_map);
+
+tile_map = bytes;
+bytes = tmp;
+
 
 bytes = hex2dec(bytes);
 tile_map = hex2dec(tile_map);
@@ -12,17 +18,17 @@ bytes2 = bytes(2:2:end);
 t = 1;
 tiles = cell(1,length(bytes1)/8);
 for k = 0:8:length(bytes1)-1
-        bits1 = de2bi(bytes1(k+1:k+8)',8,'left-msb');
-        bits2 = de2bi(bytes2(k+1:k+8)',8,'left-msb');
-        bits1 = reshape(bits1,numel(bits1),1);
-        bits2 = reshape(bits2,numel(bits2),1);
-        bits = [bits1,bits2];
-        pixels = bi2de(bits);
-        pixels = reshape(pixels,8,8);
-        I = pixels*63;
-        I = 255-I;
-        tiles{t} = I;
-        t = t+1;
+    bits1 = de2bi(bytes1(k+1:k+8)',8,'left-msb');
+    bits2 = de2bi(bytes2(k+1:k+8)',8,'left-msb');
+    bits1 = reshape(bits1,numel(bits1),1);
+    bits2 = reshape(bits2,numel(bits2),1);
+    bits = [bits1,bits2];
+    pixels = bi2de(bits);
+    pixels = reshape(pixels,8,8);
+    I = pixels*63;
+    I = 255-I;
+    tiles{t} = I;
+    t = t+1;
 end
 
 t = 1;
