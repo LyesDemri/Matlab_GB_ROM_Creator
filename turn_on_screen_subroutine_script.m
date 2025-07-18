@@ -5,5 +5,7 @@ LD_HL(LCD_control);
 SET_7_pHLp();
 SET_4_pHLp();
 SET_0_pHLp();
+LD_HL(BG_palette);
+LD_pHLp('E4');
 POP_HL();
 RET();

@@ -23,6 +23,7 @@ CALL(turn_off_screen);
 CALL(clear_tiles);
 CALL(clear_screen);
 
+%CALL(write_ASCII_chars);
 %write character tiles in 
 LD_BC(number_tiles_address);LD_DE('8300');%insert here so it respects ASCII
 %10 tiles for number sprites
