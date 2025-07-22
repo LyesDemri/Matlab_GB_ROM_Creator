@@ -8,6 +8,7 @@ print_character = dec2hex(PC,4);
 
 PUSH_BC();
 PUSH_DE();
+PUSH_HL();
 
 LD_HL(cursor_address_H);
 LD_B_pHLp();
@@ -20,6 +21,7 @@ LD_pHLp_A();
 LD_DE(cursor_address_H);
 CALL(increment_16bit_register);
 
+POP_HL();
 POP_DE();
 POP_BC();
 RET();
