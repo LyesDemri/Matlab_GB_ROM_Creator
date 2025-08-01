@@ -46,4 +46,4 @@ OBP0 = 'ff48';
 OBP1 = 'ff49';
 window_Y = 'ff4a';
 window_X = 'ff4b';
-
+interrupt_enable = 'ffff';
