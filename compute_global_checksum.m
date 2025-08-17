@@ -17,6 +17,8 @@ for i = 1:length(rom)
     checksum = bin2dec(checksum);
 end
 
+disp(['computed checksum: ' dec2hex(checksum,4)]);
+
 %you also need to make sure to separate the 16 high bits from the 16 low
 %bits
 checksum = dec2bin(checksum,16);
@@ -24,3 +26,4 @@ checksumH = bin2dec(checksum(1:8));
 checksumL = bin2dec(checksum(9:16));
 rom(hex2dec('014E')+1) = checksumH;
 rom(hex2dec('014F')+1) = checksumL;
+

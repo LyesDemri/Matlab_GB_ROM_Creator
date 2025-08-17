@@ -14,7 +14,7 @@ loop1 = dec2hex(PC,4);
     DEC_A();
 JP_NZ(loop1);
 
-LD_A('68');
+LD_A('FF');
 loop1 = dec2hex(PC,4);
     LD_pHLp('00');
     INC_HL();
